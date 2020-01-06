@@ -6,7 +6,7 @@ Describe "基本検索処理" {
             $temp_file = New-TemporaryFile;
             Set-Content -Path $temp_file.FullName -Value "aaa`nbbb`nccc`nddd`neee";
             $result = Search-String -Path $temp_file.FullName -Pattern "c";
-            $result[0] | Should -Be "$($temp_file.FullName) 00003 *: ccc";
+            $result | Should -Be "$($temp_file.FullName) 00003 *: ccc";
         } finally {
             $temp_file.Delete();
         }

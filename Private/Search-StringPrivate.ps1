@@ -12,27 +12,13 @@ function Search-StringPrivate() {
     $context_count = [Math]::Max($Before, $After);
     Select-String -Path $Path -Pattern $Pattern -Context $context_count -Encoding $Encoding -CaseSensitive:$CaseSensitive | ForEach-Object {
         $match_info = $_;
-        if($Before -gt 0) {
-            # 前行表示
-            $context = $match_info.Context.PreContext;
-            $end = $context.Length - 1;
-            $start = $end - [Math]::Min($end, $Before - 1)
-            for($i = $start; $i -le $end; $i++) {
-                $distance = $i - $end - 1;
-                $Writer.Invoke($Path.FullName, $match_info.LineNumber + $distance, $context[$i], $distance);
-            }
+        # 前半部、後半部をそれぞれsliceして全て繋げる（sliceした結果要素が1つになると配列ではなくなるので@()で配列に戻している）
+        $pre_lines = @(if($Before -ne 0) { $match_info.Context.PreContext[-$Before..-1] } else { @() });
+        $post_lines = @(if($After -ne 0 ) { $match_info.Context.PostContext[0..($After - 1)] } else { @() });
+        $all_lines = $pre_lines + @($match_info.Line) + $post_lines;
+        for($i = 0; $i -lt $all_lines.Length; $i++) {
+            $distance = -$pre_lines.Length + $i;
+            $Writer.Invoke($Path.FullName, $match_info.LineNumber + $distance, $all_lines[$i], $distance);
         }
-        # マッチ行表示
-        $Writer.Invoke($Path.FullName, $match_info.LineNumber, $match_info.Line, 0);
-        if($After -gt 0) {
-            # 後行表示
-            $context = $match_info.Context.PostContext;
-            $end = [Math]::Min($context.Length - 1, $After - 1)
-            for($i = 0; $i -le $end; $i++) {
-                $distance = $i + 1;
-                $Writer.Invoke($Path.FullName, $match_info.LineNumber + $distance, $context[$i], $distance);
-            }
-        }
-        Write-Output -InputObject "";
-    };
+    }
 }
