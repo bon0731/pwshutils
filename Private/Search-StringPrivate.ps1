@@ -19,7 +19,6 @@ function Search-StringPrivate() {
         $before_output_line_file = "";
         for($i = 0; $i -lt $all_lines.Length; $i++) {
             $distance = -$pre_lines.Length + $i;
-            # $Writer.Invoke($Path.FullName, $match_info.LineNumber + $distance, $all_lines[$i], $distance);
             $Writer.Invoke(@{
                 # ファイル内最初のマッチ出力
                 IsFileFirst = $before_output_line_file -ne $Path.FullName;
