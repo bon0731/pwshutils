@@ -6,7 +6,39 @@ Describe "基本検索処理" {
             $temp_file = New-TemporaryFile;
             Set-Content -Path $temp_file.FullName -Value "aaa`nbbb`nccc`nddd`neee";
             $result = Search-String -Path $temp_file.FullName -Pattern "c";
-            $result | Should -Be "$($temp_file.FullName) 00003 *: ccc";
+            $result[0] | Should -Be "";
+            $result[1] | Should -Be "[ $($temp_file.FullName) ]";
+            $result[2] | Should -Be "";
+            $result[3] | Should -Be " 00003 *: ccc";
+        } finally {
+            $temp_file.Delete();
+        }
+    }
+    It "マッチ行表示（複数行マッチ）" {
+        try {
+            $temp_file = New-TemporaryFile;
+            Set-Content -Path $temp_file.FullName -Value "aaa`nbbb`nccc`nddd`neee";
+            $result = Search-String -Path $temp_file.FullName -Pattern "a|c|e";
+            $result[0] | Should -Be "";
+            $result[1] | Should -Be "[ $($temp_file.FullName) ]";
+            $result[2] | Should -Be "";
+            $result[3] | Should -Be " 00001 *: aaa";
+            $result[4] | Should -Be " 00003 *: ccc";
+            $result[5] | Should -Be " 00005 *: eee";
+        } finally {
+            $temp_file.Delete();
+        }
+    }
+    It "マッチ行表示（大文字小文字区別）" {
+        try {
+            $temp_file = New-TemporaryFile;
+            Set-Content -Path $temp_file.FullName -Value "Aaa`naAa`nAaA`naAa`naaA";
+            $result = Search-String -Path $temp_file.FullName -Pattern "aAa" -CaseSensitive;
+            $result[0] | Should -Be "";
+            $result[1] | Should -Be "[ $($temp_file.FullName) ]";
+            $result[2] | Should -Be "";
+            $result[3] | Should -Be " 00002 *: aAa";
+            $result[4] | Should -Be " 00004 *: aAa";
         } finally {
             $temp_file.Delete();
         }
@@ -16,9 +48,12 @@ Describe "基本検索処理" {
             $temp_file = New-TemporaryFile;
             Set-Content -Path $temp_file.FullName -Value "aaa`nbbb`nccc`nddd`neee";
             $result = Search-String -Path $temp_file.FullName -Pattern "c" -Before 2;
-            $result[0] | Should -Be "$($temp_file.FullName) 00001  : aaa";
-            $result[1] | Should -Be "$($temp_file.FullName) 00002  : bbb";
-            $result[2] | Should -Be "$($temp_file.FullName) 00003 *: ccc";
+            $result[0] | Should -Be "";
+            $result[1] | Should -Be "[ $($temp_file.FullName) ]";
+            $result[2] | Should -Be "";
+            $result[3] | Should -Be " 00001  : aaa";
+            $result[4] | Should -Be " 00002  : bbb";
+            $result[5] | Should -Be " 00003 *: ccc";
         } finally {
             $temp_file.Delete();
         }
@@ -28,9 +63,12 @@ Describe "基本検索処理" {
             $temp_file = New-TemporaryFile;
             Set-Content -Path $temp_file.FullName -Value "aaa`nbbb`nccc`nddd`neee";
             $result = Search-String -Path $temp_file.FullName -Pattern "c" -Before 100;
-            $result[0] | Should -Be "$($temp_file.FullName) 00001  : aaa";
-            $result[1] | Should -Be "$($temp_file.FullName) 00002  : bbb";
-            $result[2] | Should -Be "$($temp_file.FullName) 00003 *: ccc";
+            $result[0] | Should -Be "";
+            $result[1] | Should -Be "[ $($temp_file.FullName) ]";
+            $result[2] | Should -Be "";
+            $result[3] | Should -Be " 00001  : aaa";
+            $result[4] | Should -Be " 00002  : bbb";
+            $result[5] | Should -Be " 00003 *: ccc";
         } finally {
             $temp_file.Delete();
         }
@@ -40,9 +78,12 @@ Describe "基本検索処理" {
             $temp_file = New-TemporaryFile;
             Set-Content -Path $temp_file.FullName -Value "aaa`nbbb`nccc`nddd`neee";
             $result = Search-String -Path $temp_file.FullName -Pattern "c" -After 2;
-            $result[0] | Should -Be "$($temp_file.FullName) 00003 *: ccc";
-            $result[1] | Should -Be "$($temp_file.FullName) 00004  : ddd";
-            $result[2] | Should -Be "$($temp_file.FullName) 00005  : eee";
+            $result[0] | Should -Be "";
+            $result[1] | Should -Be "[ $($temp_file.FullName) ]";
+            $result[2] | Should -Be "";
+            $result[3] | Should -Be " 00003 *: ccc";
+            $result[4] | Should -Be " 00004  : ddd";
+            $result[5] | Should -Be " 00005  : eee";
         } finally {
             $temp_file.Delete();
         }
@@ -51,10 +92,13 @@ Describe "基本検索処理" {
         try {
             $temp_file = New-TemporaryFile;
             Set-Content -Path $temp_file.FullName -Value "aaa`nbbb`nccc`nddd`neee";
-            $result = Search-String -Path $temp_file.FullName -Pattern "c" -After 2;
-            $result[0] | Should -Be "$($temp_file.FullName) 00003 *: ccc";
-            $result[1] | Should -Be "$($temp_file.FullName) 00004  : ddd";
-            $result[2] | Should -Be "$($temp_file.FullName) 00005  : eee";
+            $result = Search-String -Path $temp_file.FullName -Pattern "c" -After 100;
+            $result[0] | Should -Be "";
+            $result[1] | Should -Be "[ $($temp_file.FullName) ]";
+            $result[2] | Should -Be "";
+            $result[3] | Should -Be " 00003 *: ccc";
+            $result[4] | Should -Be " 00004  : ddd";
+            $result[5] | Should -Be " 00005  : eee";
         } finally {
             $temp_file.Delete();
         }
@@ -64,10 +108,36 @@ Describe "基本検索処理" {
             $temp_file = New-TemporaryFile;
             Set-Content -Path $temp_file.FullName -Value "aaa`nbbb`nccc`nddd`neee";
             $result = Search-String -Path $temp_file.FullName -Pattern "c" -Before 1 -After 2;
-            $result[0] | Should -Be "$($temp_file.FullName) 00002  : bbb";
-            $result[1] | Should -Be "$($temp_file.FullName) 00003 *: ccc";
-            $result[2] | Should -Be "$($temp_file.FullName) 00004  : ddd";
-            $result[3] | Should -Be "$($temp_file.FullName) 00005  : eee";
+            $result[0] | Should -Be "";
+            $result[1] | Should -Be "[ $($temp_file.FullName) ]";
+            $result[2] | Should -Be "";
+            $result[3] | Should -Be " 00002  : bbb";
+            $result[4] | Should -Be " 00003 *: ccc";
+            $result[5] | Should -Be " 00004  : ddd";
+            $result[6] | Should -Be " 00005  : eee";
+        } finally {
+            $temp_file.Delete();
+        }
+    }
+    It "前後行表示（複数行マッチ）" {
+        try {
+            $temp_file = New-TemporaryFile;
+            Set-Content -Path $temp_file.FullName -Value "aaa`nbbb`nccc`nddd`neee";
+            $result = Search-String -Path $temp_file.FullName -Pattern "a|c|e" -Before 1 -After 2;
+            $result[0] | Should -Be "";
+            $result[1] | Should -Be "[ $($temp_file.FullName) ]";
+            $result[2] | Should -Be "";
+            $result[3] | Should -Be " 00001 *: aaa";
+            $result[4] | Should -Be " 00002  : bbb";
+            $result[5] | Should -Be " 00003  : ccc";
+            $result[6] | Should -Be "";
+            $result[7] | Should -Be " 00002  : bbb";
+            $result[8] | Should -Be " 00003 *: ccc";
+            $result[9] | Should -Be " 00004  : ddd";
+            $result[10] | Should -Be " 00005  : eee";
+            $result[11] | Should -Be "";
+            $result[12] | Should -Be " 00004  : ddd";
+            $result[13] | Should -Be " 00005 *: eee";
         } finally {
             $temp_file.Delete();
         }
@@ -97,10 +167,13 @@ Describe "エンコード" {
             $temp_file = New-TemporaryFile;
             Set-Content -Path $temp_file.FullName -Value "あいうえお`nかきくけこ`nさしすせそ`nたちつてと`nなにぬねの" -Encoding SJIS;
             $result = Search-String -Path $temp_file.FullName -Pattern "す" -Before 1 -After 2 -Encoding SJIS;
-            $result[0] | Should -Be "$($temp_file.FullName) 00002  : かきくけこ";
-            $result[1] | Should -Be "$($temp_file.FullName) 00003 *: さしすせそ";
-            $result[2] | Should -Be "$($temp_file.FullName) 00004  : たちつてと";
-            $result[3] | Should -Be "$($temp_file.FullName) 00005  : なにぬねの";
+            $result[0] | Should -Be "";
+            $result[1] | Should -Be "[ $($temp_file.FullName) ]";
+            $result[2] | Should -Be "";
+            $result[3] | Should -Be " 00002  : かきくけこ";
+            $result[4] | Should -Be " 00003 *: さしすせそ";
+            $result[5] | Should -Be " 00004  : たちつてと";
+            $result[6] | Should -Be " 00005  : なにぬねの";
         } finally {
             $temp_file.Delete();
         }
@@ -110,10 +183,13 @@ Describe "エンコード" {
             $temp_file = New-TemporaryFile;
             Set-Content -Path $temp_file.FullName -Value "あいうえお`nかきくけこ`nさしすせそ`nたちつてと`nなにぬねの" -Encoding UTF8;
             $result = Search-String -Path $temp_file.FullName -Pattern "す" -Before 1 -After 2 -Encoding UTF-8;
-            $result[0] | Should -Be "$($temp_file.FullName) 00002  : かきくけこ";
-            $result[1] | Should -Be "$($temp_file.FullName) 00003 *: さしすせそ";
-            $result[2] | Should -Be "$($temp_file.FullName) 00004  : たちつてと";
-            $result[3] | Should -Be "$($temp_file.FullName) 00005  : なにぬねの";
+            $result[0] | Should -Be "";
+            $result[1] | Should -Be "[ $($temp_file.FullName) ]";
+            $result[2] | Should -Be "";
+            $result[3] | Should -Be " 00002  : かきくけこ";
+            $result[4] | Should -Be " 00003 *: さしすせそ";
+            $result[5] | Should -Be " 00004  : たちつてと";
+            $result[6] | Should -Be " 00005  : なにぬねの";
         } finally {
             $temp_file.Delete();
         }
@@ -123,10 +199,13 @@ Describe "エンコード" {
             $temp_file = New-TemporaryFile;
             Set-Content -Path $temp_file.FullName -Value "あいうえお`nかきくけこ`nさしすせそ`nたちつてと`nなにぬねの" -Encoding Unicode;
             $result = Search-String -Path $temp_file.FullName -Pattern "す" -Before 1 -After 2 -Encoding Unicode;
-            $result[0] | Should -Be "$($temp_file.FullName) 00002  : かきくけこ";
-            $result[1] | Should -Be "$($temp_file.FullName) 00003 *: さしすせそ";
-            $result[2] | Should -Be "$($temp_file.FullName) 00004  : たちつてと";
-            $result[3] | Should -Be "$($temp_file.FullName) 00005  : なにぬねの";
+            $result[0] | Should -Be "";
+            $result[1] | Should -Be "[ $($temp_file.FullName) ]";
+            $result[2] | Should -Be "";
+            $result[3] | Should -Be " 00002  : かきくけこ";
+            $result[4] | Should -Be " 00003 *: さしすせそ";
+            $result[5] | Should -Be " 00004  : たちつてと";
+            $result[6] | Should -Be " 00005  : なにぬねの";
         } finally {
             $temp_file.Delete();
         }
@@ -135,8 +214,11 @@ Describe "エンコード" {
 Describe "パイプ処理" {
     It "パイプ入力" {
         # このテストスクリプト自体から検索
-        $result = Get-ChildItem $PSScriptRoot | Search-String -Pattern "パイプ入力";
-        $result[0] | Should -Match ".*パイプ入力";
+        $result = "$PSScriptRoot/Search-String.Tests.ps1" | Search-String -Pattern "パイプ入力";
+        $result[0] | Should -Be "";
+        $result[1] | Should -Be "[ $PSScriptRoot/Search-String.Tests.ps1 ]";
+        $result[2] | Should -Be "";
+        $result[3] | Should -Match ".*パイプ入力";
     }
 }
 Describe "例外" {

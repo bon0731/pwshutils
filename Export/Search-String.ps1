@@ -31,26 +31,41 @@ function Search-String() {
 
 .PARAMETER Writer
 マッチ行を出力するための処理をスクリプトブロックで指定します。
-スクリプトブロックには以下のパラメータが渡されます。
+スクリプトブロックには出力行の以下の情報パラメータが渡されます。
 
-第一引数：ファイル名のフルパス
-第二引数：出力行番号
-第三引数：出力行内容
-第四引数：マッチ行までの距離（例えば、-1ならマッチ行の直前行、0ならマッチ行、1なら直後の行）
+$info.IsFileFirst
+ 検索ファイルの最初の出力行の場合、True
+$info.IsMatchLinesFirst
+ マッチ単位先頭の出力行である場合、True
+ （ファイル先頭でなければ-Beforeの最終行の時、True）
+$info.IsMatchLinesEnd
+ マッチ単位最後の出力行である場合、True
+ （ファイル末尾でなければ-Afterの最終行の時、True）
+$info.FilePath
+ 検索ファイルフルパス
+$info.LineNumber
+ 出力行番号
+$info.Line
+ 出力行内容
+$info.MatchLineDistance
+ マッチ行までの距離（例えば、-1ならマッチ行の直前行、0ならマッチ行、1なら直後の行）
 
-例：（省略時のデフォルト処理）
+例：
 
 -Writer {
-    param($Filename, $LineNumber, $Line, $MatchLineDistance)
-    if($MatchLineDistance -eq 0) {
-        Write-Output -InputObject "${Filename} $($LineNumber.ToString().PadLeft(5, "0")) *: ${Line}";
-    } else {
-        Write-Output -InputObject "${Filename} $($LineNumber.ToString().PadLeft(5, "0"))  : ${Line}";
+    param($info)
+
+    if($info.IsFileFirst) {
+        Write-Output -InputObject "";
+        Write-Output -InputObject "[ $($info.FilePath) ]";
+        Write-Output -InputObject "";
     }
+    $accent = if($info.MatchLineDistance -eq 0) { "*" } else { " " };
+    Write-Output -InputObject " $($info.LineNumber.ToString().PadLeft(5, "0")) ${accent}: $($info.Line)";
 }
 
-この例では「ファイル名 行番号 : 行内容」の形式で出力し、
-マッチ行に関しては行番号の後にアスタリスクを付けて出力します。
+この例では、ファイル毎の最初に「ファイルパス」を出力し、以降「 行番号 : 行内容」の形式で検索結果を出力します。
+（マッチ行に関しては行番号の後にアスタリスクを付けて出力します。）
 
 .PARAMETER CaseSensitive
 Patternパラメータに指定した文字列でマッチさせる際に大文字小文字を区別するかを指定します。
@@ -65,12 +80,16 @@ Patternパラメータに指定した文字列でマッチさせる際に大文�
         [string]$Encoding="UTF-8",
         [scriptblock]$Writer={
             param($info)
-            if($info.MatchLineDistance -eq 0) {
-                Write-Output -InputObject "$($info.FilePath) $($info.LineNumber.ToString().PadLeft(5, "0")) *: $($info.Line)";
-            } else {
-                Write-Output -InputObject "$($info.FilePath) $($info.LineNumber.ToString().PadLeft(5, "0"))  : $($info.Line)";
+            if($info.IsFileFirst) {
+                Write-Output -InputObject "";
+                Write-Output -InputObject "[ $($info.FilePath) ]";
+                Write-Output -InputObject "";
+            } elseif($info.IsMatchLinesFirst -and ($Before -gt 0 -or $After -gt 0)) {
+                Write-Output -InputObject "";
             }
-        },
+            $accent = if($info.MatchLineDistance -eq 0) { "*" } else { " " };
+            Write-Output -InputObject " $($info.LineNumber.ToString().PadLeft(5, "0")) ${accent}: $($info.Line)";
+        }.GetNewClosure(),
         [switch]$CaseSensitive
     )
     Process {
