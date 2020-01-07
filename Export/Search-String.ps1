@@ -64,11 +64,11 @@ Patternパラメータに指定した文字列でマッチさせる際に大文�
         [Int]$After,
         [string]$Encoding="UTF-8",
         [scriptblock]$Writer={
-            param($Filename, $LineNumber, $Line, $MatchLineDistance)
-            if($MatchLineDistance -eq 0) {
-                Write-Output -InputObject "${Filename} $($LineNumber.ToString().PadLeft(5, "0")) *: ${Line}";
+            param($info)
+            if($info.MatchLineDistance -eq 0) {
+                Write-Output -InputObject "$($info.FilePath) $($info.LineNumber.ToString().PadLeft(5, "0")) *: $($info.Line)";
             } else {
-                Write-Output -InputObject "${Filename} $($LineNumber.ToString().PadLeft(5, "0"))  : ${Line}";
+                Write-Output -InputObject "$($info.FilePath) $($info.LineNumber.ToString().PadLeft(5, "0"))  : $($info.Line)";
             }
         },
         [switch]$CaseSensitive

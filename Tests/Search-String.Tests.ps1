@@ -79,8 +79,8 @@ Describe "出力フォーマット" {
             $temp_file = New-TemporaryFile;
             Set-Content -Path $temp_file.FullName -Value "aaa`nbbb`nccc`nddd`neee";
             $result = Search-String -Path $temp_file.FullName -Pattern "c" -Before 1 -After 2 -Writer {
-                param($Filename, $LineNumber, $Line, $MatchLineDistance)
-                Write-Output "${LineNumber}行目 : ${Line} ${MatchLineDistance}";
+                param($info)
+                Write-Output "$($info.LineNumber)行目 : $($info.Line) $($info.MatchLineDistance)";
             };
             $result[0] | Should -Be "2行目 : bbb -1";
             $result[1] | Should -Be "3行目 : ccc 0";

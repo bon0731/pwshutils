@@ -16,9 +16,27 @@ function Search-StringPrivate() {
         $pre_lines = @(if($Before -ne 0) { $match_info.Context.PreContext[-$Before..-1] } else { @() });
         $post_lines = @(if($After -ne 0 ) { $match_info.Context.PostContext[0..($After - 1)] } else { @() });
         $all_lines = $pre_lines + @($match_info.Line) + $post_lines;
+        $before_output_line_file = "";
         for($i = 0; $i -lt $all_lines.Length; $i++) {
             $distance = -$pre_lines.Length + $i;
-            $Writer.Invoke($Path.FullName, $match_info.LineNumber + $distance, $all_lines[$i], $distance);
+            # $Writer.Invoke($Path.FullName, $match_info.LineNumber + $distance, $all_lines[$i], $distance);
+            $Writer.Invoke(@{
+                # ファイル内最初のマッチ出力
+                IsFileFirst = $before_output_line_file -ne $Path.FullName;
+                # マッチ単位最初の出力行
+                IsMatchLinesFirst = $i -eq 0;
+                # マッチ単位最後の出力行
+                IsMatchLinesEnd = $i -eq $all_lines.Length - 1;
+                # ファイルフルパス
+                FilePath=$Path.FullName;
+                # 行番号
+                LineNumber=$match_info.LineNumber + $distance;
+                # 行内容
+                Line=$all_lines[$i];
+                # マッチ行までの相対距離
+                MatchLineDistance=$distance;
+            });
+            $before_output_line_file = $Path.FullName;
         }
     }
 }
