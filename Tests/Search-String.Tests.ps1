@@ -142,6 +142,33 @@ Describe "基本検索処理" {
             $temp_file.Delete();
         }
     }
+    It "PathPattern複数ファイル" {
+        try {
+            $temp_file = New-TemporaryFile;
+            $temp_dir = Split-Path -Path $temp_file.FullName -Parent;
+            New-Item -Path "$temp_dir/test_dir" -ItemType Directory;
+            Set-Content -Path "$temp_dir/test_dir/a.tmp" -Value "aaa`nbbb`nccc`nddd`neee";
+            Set-Content -Path "$temp_dir/test_dir/b.tmp" -Value "aaa`nbbb`nccc`nddd`neee";
+            $result = Search-String -Path "$temp_dir/test_dir" -PathPattern ".*tmp" -Pattern "c" -Before 1 -After 2;
+            $result[0] | Should -Be "";
+            $result[1] | Should -Be "[ $temp_dir/test_dir/a.tmp ]";
+            $result[2] | Should -Be "";
+            $result[3] | Should -Be " 00002  : bbb";
+            $result[4] | Should -Be " 00003 *: ccc";
+            $result[5] | Should -Be " 00004  : ddd";
+            $result[6] | Should -Be " 00005  : eee";
+            $result[7] | Should -Be "";
+            $result[8] | Should -Be "[ $temp_dir/test_dir/b.tmp ]";
+            $result[9] | Should -Be "";
+            $result[10] | Should -Be " 00002  : bbb";
+            $result[11] | Should -Be " 00003 *: ccc";
+            $result[12] | Should -Be " 00004  : ddd";
+            $result[13] | Should -Be " 00005  : eee";
+        } finally {
+            $temp_file.Delete();
+            Remove-Item "$temp_dir/test_dir" -Recurse;
+        }
+    }
 }
 Describe "出力フォーマット" {
     It "フォーマット変更" {
@@ -222,16 +249,13 @@ Describe "パイプ処理" {
     }
 }
 Describe "例外" {
-    It "Path、PathPattern両方未指定" {
+    It "Pathが存在しない" {
         try {
-            $temp_file = New-TemporaryFile;
-            Set-Content -Path $temp_file.FullName -Value "aaa`nbbb`nccc`nddd`neee";
-            Search-String -Pattern "c";
+            $path = "not_found";
+            Search-String -Path $path -Pattern "c";
             throw "";
         } catch {
-            $_.Exception.Message | Should -Be "-Path または -PathPattern パラメータは必須です。";
-        } finally {
-            $temp_file.Delete();
+            $_.Exception.Message | Should -Be "${path} が見つかりません。";
         }
     }
 }

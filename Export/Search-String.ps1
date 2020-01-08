@@ -9,13 +9,15 @@ function Search-String() {
 出力フォーマットはWriterパラメータにより調整できます。
 
 .PARAMETER Path
-文字列検索対象のファイルへのパスを指定します。
-このパラメータを指定しない場合は、PathPatternパラメータを指定する必要があります。
+文字列検索対象のパスを指定します。
+ディレクトリパスを指定した場合は、そのディレクトリ配下のファイルが検索対象となります。
+ファイルパスを指定した場合は、PathPatternパラメータは無視されます。
+未指定の場合はカレントディレクトリ配下を検索対象とします。
 
 .PARAMETER PathPattern
-カレントディレクトリを基準に、配下のファイルのファイル名に対しマッチさせる正規表現を指定します。
-マッチしたファイルに対し、検索対象文字列が存在するか検索します。
-このパラメータを指定しない場合は、Pathパラメータを指定する必要があります。
+Pathパラメータに指定したディレクトリ配下のファイルのうち、
+このパラメータに指定した正規表現にマッチしたファイルのみを検索対象とします。
+未指定の場合はすべてのファイルが検索対象となります。
 
 .PARAMETER Pattern
 ファイル内を検索する正規表現文字列を指定します。
@@ -72,8 +74,8 @@ Patternパラメータに指定した文字列でマッチさせる際に大文�
 このパラメータを指定した場合には区別します。
 #>
     param (
-        [Parameter(ValueFromPipeline)][string]$Path,
-        [string]$PathPattern,
+        [Parameter(ValueFromPipeline)][string]$Path=".",
+        [string]$PathPattern=".*",
         [Parameter(Mandatory)]$Pattern,
         [Int]$Before,
         [Int]$After,
@@ -93,17 +95,17 @@ Patternパラメータに指定した文字列でマッチさせる際に大文�
         [switch]$CaseSensitive
     )
     Process {
-        if(-not [string]::IsNullOrEmpty($PathPattern)) {
-            Get-ChildItem -File -Recurse | Where-Object {$_.FullName -match $PathPattern} | ForEach-Object {
+        try {
+            $resolve_path = (Resolve-Path -Path $Path -ErrorAction Stop).Path;
+        } catch [System.Management.Automation.ItemNotFoundException] {
+            throw "${Path} が見つかりません。";
+        }
+        if([System.IO.File]::Exists($resolve_path)) {
+            Search-StringPrivate -Path $resolve_path -Pattern $Pattern -Before $Before -After $After -Encoding $Encoding -Writer $Writer -CaseSensitive:$CaseSensitive;
+        } else {
+            Get-ChildItem -Path $resolve_path -File -Recurse | Where-Object {$_.FullName -match $PathPattern} | ForEach-Object {
                 Search-StringPrivate -Path $_.FullName -Pattern $Pattern -Before $Before -After $After -Encoding $Encoding -Writer $Writer -CaseSensitive:$CaseSensitive;
             }
-        } elseif (-not [string]::IsNullOrEmpty($Path)) {
-            $resolve_path = (Resolve-Path -Path $Path).Path;
-            if([System.IO.File]::Exists($resolve_path)) {
-                Search-StringPrivate -Path $resolve_path -Pattern $Pattern -Before $Before -After $After -Encoding $Encoding -Writer $Writer -CaseSensitive:$CaseSensitive;
-            }
-        } else {
-            throw "-Path または -PathPattern パラメータは必須です。";
         }
     }
 }
