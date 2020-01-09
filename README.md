@@ -9,7 +9,9 @@ Import-Module ./pwshutils.psm1 -Force
 
 ## 使えるようになる関数
 
-* Search-String (ファイル検索)
+* Search-File (ファイル名検索)
+* Search-Directory (ディレクトリ名検索)
+* Search-String (ファイル内文字列検索)
 * Rename-ItemByPattern (正規表現によるファイル名変更)
 * Convert-Encoding (ファイルエンコード変更)
 * Convert-NewLine (ファイル改行コード変更)
