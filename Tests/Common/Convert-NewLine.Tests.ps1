@@ -1,4 +1,4 @@
-Import-Module "$PSScriptRoot/../pwshutils.psm1" -Force;
+Import-Module "$PSScriptRoot/../../pwshutils.psm1" -Force;
 
 Describe "基本変換処理" {
     @("SJIS", "UTF-8", "UTF-16BE", "UTF-16LE", "UTF-32BE", "UTF-32LE") | ForEach-Object {

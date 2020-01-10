@@ -1,4 +1,4 @@
-Import-Module "$PSScriptRoot/../pwshutils.psm1" -Force;
+Import-Module "$PSScriptRoot/../../pwshutils.psm1" -Force;
 
 Describe "基本変換処理" {
     @(
