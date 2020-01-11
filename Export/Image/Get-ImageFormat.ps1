@@ -27,9 +27,9 @@ function Get-ImageFormat() {
             [Imaging.ImageFormat] | Get-Member -Static -MemberType Properties | ForEach-Object {
                 $formats[([Imaging.ImageFormat]::"$($_.Name)")] = $_.Name;
             }
-            $format = $types[$image.RawFormat];
+            $format = $formats[$image.RawFormat];
             if($null -ne $format) {
-                return $types[$image.RawFormat];
+                return $formats[$image.RawFormat];
             } else {
                 return "Unknown";
             }
