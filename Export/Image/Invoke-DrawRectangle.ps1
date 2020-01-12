@@ -23,6 +23,9 @@ function Invoke-DrawRectangle() {
 .PARAMETER Height
 矩形高さを指定します。
 
+.PARAMETER LineWidth
+描画線の太さを指定します。
+
 .PARAMETER A
 描画線の色の透過度(0〜255)を指定します。
 
@@ -45,6 +48,7 @@ function Invoke-DrawRectangle() {
         [Parameter(Mandatory)][int]$Top,
         [Parameter(Mandatory)][int]$Width,
         [Parameter(Mandatory)][int]$Height,
+        [int]$LineWidth=1,
         [int]$A=0xFF,
         [int]$R=0x00,
         [int]$G=0x00,
@@ -66,7 +70,7 @@ function Invoke-DrawRectangle() {
             $graphics = [Graphics]::FromImage($image);
             $graphics.SmoothingMode = [Drawing2D.SmoothingMode]::HighQuality;
             $brush = [SolidBrush]::new([Color]::FromArgb($alpha, $red, $green, $blue));
-            $pen = [Pen]::new($brush);
+            $pen = [Pen]::new($brush, $LineWidth);
             $rectangle = [Rectangle]::new($Left, $Top, $Width, $Height);
             $graphics.DrawRectangle($pen, $rectangle);
             $image.Save($resolve_path);

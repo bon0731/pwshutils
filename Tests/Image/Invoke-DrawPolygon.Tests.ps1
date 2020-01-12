@@ -13,7 +13,7 @@ Describe "基本処理" {
                 @{x=40;y=60};
                 @{x=60;y=70};
                 @{x=50;y=80};
-            ) -R 0xFF -G 0xFF -B 0xFF -A 0x7F;
+            ) -R 0xFF -G 0xFF -B 0xFF -A 0x7F -LineWidth 5;
             Copy-Item -Path $temp_file.FullName -Destination "$PSScriptRoot/Outputs/DrawPolygon_$(++$script:count;$script:count).bmp";
         } finally {
             $temp_file.Delete();
@@ -31,7 +31,7 @@ Describe "基本処理" {
                     @{x=40;y=60};
                     @{x=60;y=70};
                     @{x=50;y=80};
-                ) -R 0xFF -G 0xFF -B 0xFF -A 0x7F;
+                ) -R 0xFF -G 0xFF -B 0xFF -A 0x7F -LineWidth 5;
             Copy-Item -Path $temp_file.FullName -Destination "$PSScriptRoot/Outputs/DrawPolygon_$(++$script:count;$script:count).bmp";
         } finally {
             $temp_file.Delete();
@@ -50,7 +50,7 @@ Describe "例外" {
                 @{x=40;y=60};
                 @{x=60;y=70};
                 @{x=50;y=80};
-            ) -R 0xFF -G 0xFF -B 0xFF -A 0x7F;
+            ) -R 0xFF -G 0xFF -B 0xFF -A 0x7F -LineWidth 5;
             throw "";
         } catch {
             $_.Exception.Message | Should -Be "${path} が見つかりません。";

@@ -5,7 +5,7 @@ Describe "基本処理" {
         try {
             $temp_file = New-TemporaryFile;
             New-Image -Path $temp_file.FullName -Width 100 -Height 100;
-            Invoke-DrawEllipse -Path $temp_file.FullName -Left 0 -Top 0 -Width 100 -Height 100 -R 0xFF -G 0xFF -B 0xFF -A 0x7F;
+            Invoke-DrawEllipse -Path $temp_file.FullName -Left 0 -Top 0 -Width 100 -Height 100 -R 0xFF -G 0xFF -B 0xFF -A 0x7F -LineWidth 5;
             Copy-Item -Path $temp_file.FullName -Destination "$PSScriptRoot/Outputs/DrawEllipse_$(++$script:count;$script:count).bmp";
         } finally {
             $temp_file.Delete();
@@ -15,7 +15,7 @@ Describe "基本処理" {
         try {
             $temp_file = New-TemporaryFile;
             New-Image -Path $temp_file.FullName -Width 100 -Height 100 -PassThru `
-                | Invoke-DrawEllipse -Left 0 -Top 0 -Width 100 -Height 100 -R 0xFF -G 0xFF -B 0xFF -A 0x7F;
+                | Invoke-DrawEllipse -Left 0 -Top 0 -Width 100 -Height 100 -R 0xFF -G 0xFF -B 0xFF -A 0x7F -LineWidth 5;
             Copy-Item -Path $temp_file.FullName -Destination "$PSScriptRoot/Outputs/DrawEllipse_$(++$script:count;$script:count).bmp";
         } finally {
             $temp_file.Delete();
@@ -26,7 +26,7 @@ Describe "例外" {
     It "Pathが存在しない" {
         try {
             $path = "not_found";
-            Invoke-DrawEllipse -Path $path -Left 0 -Top 0 -Width 100 -Height 100 -R 0xFF -G 0xFF -B 0xFF -A 0x7F;
+            Invoke-DrawEllipse -Path $path -Left 0 -Top 0 -Width 100 -Height 100 -R 0xFF -G 0xFF -B 0xFF -A 0x7F -LineWidth 5;
             throw "";
         } catch {
             $_.Exception.Message | Should -Be "${path} が見つかりません。";

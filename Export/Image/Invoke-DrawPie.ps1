@@ -24,6 +24,9 @@ function Invoke-DrawPie() {
 .PARAMETER Height
 矩形高さを指定します。
 
+.PARAMETER LineWidth
+描画線の太さを指定します。
+
 .PARAMETER A
 描画線の色の透過度(0〜255)を指定します。
 
@@ -54,6 +57,7 @@ function Invoke-DrawPie() {
         [Parameter(Mandatory)][int]$Height,
         [Parameter(Mandatory)][int]$StartAngle,
         [Parameter(Mandatory)][int]$SweepAngle,
+        [int]$LineWidth=1,
         [int]$A=0xFF,
         [int]$R=0x00,
         [int]$G=0x00,
@@ -76,7 +80,7 @@ function Invoke-DrawPie() {
             $graphics.SmoothingMode = [Drawing2D.SmoothingMode]::HighQuality;
             $brush = [SolidBrush]::new([Color]::FromArgb($alpha, $red, $green, $blue));
             $rectangle = [Rectangle]::new($Left, $Top, $Width, $Height);
-            $pen = [Pen]::new($brush);
+            $pen = [Pen]::new($brush, $LineWidth);
             $graphics.DrawPie($pen, $rectangle, $StartAngle, $SweepAngle);
             $image.Save($resolve_path);
         } finally {

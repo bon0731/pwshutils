@@ -20,6 +20,9 @@ function Invoke-DrawCurve() {
     @{x=75; y=100;}
 )
 
+.PARAMETER LineWidth
+描画線の太さを指定します。
+
 .PARAMETER A
 描画線の色の透過度(0〜255)を指定します。
 
@@ -39,6 +42,7 @@ function Invoke-DrawCurve() {
     param(
         [Parameter(Mandatory, ValueFromPipeline)][string]$Path,
         [Parameter(Mandatory, ValueFromPipeline)][Point[]]$Points,
+        [int]$LineWidth=1,
         [int]$A=0xFF,
         [int]$R=0x00,
         [int]$G=0x00,
@@ -60,7 +64,7 @@ function Invoke-DrawCurve() {
             $graphics = [Graphics]::FromImage($image);
             $graphics.SmoothingMode = [Drawing2D.SmoothingMode]::HighQuality;
             $brush = [SolidBrush]::new([Color]::FromArgb($alpha, $red, $green, $blue));
-            $pen = [Pen]::new($brush);
+            $pen = [Pen]::new($brush, $LineWidth);
             $graphics.DrawCurve($pen, $Points);
             $image.Save($resolve_path);
         } finally {
