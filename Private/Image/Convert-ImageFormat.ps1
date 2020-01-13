@@ -1,4 +1,4 @@
-using namespace System.Drawing
+﻿using namespace System.Drawing
 
 function Convert-ImageFormat() {
     param(
@@ -12,11 +12,15 @@ function Convert-ImageFormat() {
             throw "${Path} が見つかりません。";
         }
         try {
-            $image = [Image]::FromFile($resolve_path);
-            $image.Save($resolve_path, $OutFormat);
+            $image = Get-ImageFromStream -Path $resolve_path;
+            $bmp = [Bitmap]::new($image);
+            $bmp.Save($resolve_path, $OutFormat);
         } finally {
             if($null -ne $image) {
                 $image.Dispose();
+            }
+            if($null -ne $bmp) {
+                $bmp.Dispose();
             }
         }
         return $resolve_path;

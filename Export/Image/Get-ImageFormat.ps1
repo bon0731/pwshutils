@@ -1,4 +1,4 @@
-using namespace System.Drawing
+﻿using namespace System.Drawing
 
 function Get-ImageFormat() {
 <#
@@ -22,7 +22,7 @@ function Get-ImageFormat() {
             throw "${Path} が見つかりません。";
         }
         try {
-            $image = [Image]::FromFile($resolve_path);
+            $image = Get-ImageFromStream -Path $resolve_path;
             $formats = @{};
             [Imaging.ImageFormat] | Get-Member -Static -MemberType Properties | ForEach-Object {
                 $formats[([Imaging.ImageFormat]::"$($_.Name)")] = $_.Name;

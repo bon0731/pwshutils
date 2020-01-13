@@ -74,7 +74,7 @@ function Invoke-DrawArc() {
         $green = [Math]::Max(0, [Math]::Min(0xFF, $G));
         $blue = [Math]::Max(0, [Math]::Min(0xFF, $B));
         try {
-            $image = [Image]::FromFile($resolve_path);
+            $image = Get-ImageFromStream -Path $resolve_path;
             $graphics = [Graphics]::FromImage($image);
             $graphics.SmoothingMode = [Drawing2D.SmoothingMode]::HighQuality;
             $brush = [SolidBrush]::new([Color]::FromArgb($alpha, $red, $green, $blue));

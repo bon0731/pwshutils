@@ -149,16 +149,17 @@ Describe "基本検索処理" {
             New-Item -Path "$temp_dir/test_dir" -ItemType Directory;
             Set-Content -Path "$temp_dir/test_dir/a.tmp" -Value "aaa`nbbb`nccc`nddd`neee";
             Set-Content -Path "$temp_dir/test_dir/b.tmp" -Value "aaa`nbbb`nccc`nddd`neee";
+            $sep = [System.IO.Path]::DirectorySeparatorChar;
             $result = Search-String -Path "$temp_dir/test_dir" -PathPattern ".*tmp" -Pattern "c" -Before 1 -After 2;
             $result[0] | Should -Be "";
-            $result[1] | Should -Be "[ $temp_dir/test_dir/a.tmp ]";
+            $result[1] | Should -Be "[ ${temp_dir}${sep}test_dir${sep}a.tmp ]";
             $result[2] | Should -Be "";
             $result[3] | Should -Be " 00002  : bbb";
             $result[4] | Should -Be " 00003 *: ccc";
             $result[5] | Should -Be " 00004  : ddd";
             $result[6] | Should -Be " 00005  : eee";
             $result[7] | Should -Be "";
-            $result[8] | Should -Be "[ $temp_dir/test_dir/b.tmp ]";
+            $result[8] | Should -Be "[ ${temp_dir}${sep}test_dir${sep}b.tmp ]";
             $result[9] | Should -Be "";
             $result[10] | Should -Be " 00002  : bbb";
             $result[11] | Should -Be " 00003 *: ccc";
@@ -241,9 +242,10 @@ Describe "エンコード" {
 Describe "パイプ処理" {
     It "パイプ入力" {
         # このテストスクリプト自体から検索
+        $sep = [System.IO.Path]::DirectorySeparatorChar;
         $result = "$PSScriptRoot/Search-String.Tests.ps1" | Search-String -Pattern "パイプ入力";
         $result[0] | Should -Be "";
-        $result[1] | Should -Be "[ $PSScriptRoot/Search-String.Tests.ps1 ]";
+        $result[1] | Should -Be "[ ${PSScriptRoot}${sep}Search-String.Tests.ps1 ]";
         $result[2] | Should -Be "";
         $result[3] | Should -Match ".*パイプ入力";
     }
