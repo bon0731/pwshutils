@@ -1,5 +1,6 @@
 # pwshutils
-PowerShellのユーティリティ
+PowerShellのユーティリティ  
+`PowerShell Core 6.2.3` 以上推奨
 
 ## 使用方法
 
