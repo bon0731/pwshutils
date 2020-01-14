@@ -64,7 +64,7 @@ function Invoke-FillPie() {
         try {
             $resolve_path = (Resolve-Path -Path $Path -ErrorAction Stop).Path;
         } catch [System.Management.Automation.ItemNotFoundException] {
-            throw "${Path} が見つかりません。";
+            throw Get-ErrorMessage -Code NOT_FOUND -Params @($Path);
         }
         $alpha = [Math]::Max(0, [Math]::Min(0xFF, $A));
         $red = [Math]::Max(0, [Math]::Min(0xFF, $R));

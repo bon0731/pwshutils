@@ -33,14 +33,14 @@ function Convert-NewLine() {
             } elseif($LF) {
                 $new_line = "`n";
             } else {
-                throw "-CRLF、-LF のいずれかを指定してください。";
+                throw Get-ErrorMessage -Code REQUIRED_OR -Params @("-CRLF", "-LF");
             }
             $resolve_path = (Resolve-Path -Path $Path -ErrorAction Stop).Path;
             $raw = Get-Content -Path $resolve_path -Encoding $Encoding -Raw;
             $bytes = [System.Text.Encoding]::GetEncoding($Encoding).GetBytes(($raw -replace "\r?\n", $new_line));
             [System.IO.File]::WriteAllBytes($resolve_path, $bytes);
         } catch [System.Management.Automation.ItemNotFoundException] {
-            throw "${Path} が見つかりません。";
+            throw Get-ErrorMessage -Code NOT_FOUND -Params @($Path);
         }
     }
 }

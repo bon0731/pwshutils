@@ -1,4 +1,5 @@
 Import-Module "$PSScriptRoot/../../pwshutils.psm1" -Force;
+. "$PSScriptRoot/../../Private/Resource/Get-ErrorMessage.ps1";
 
 Describe "基本検索処理" {
     It "マッチ行表示" {
@@ -257,7 +258,7 @@ Describe "例外" {
             Search-String -Path $path -Pattern "c";
             throw "";
         } catch {
-            $_.Exception.Message | Should -Be "${path} が見つかりません。";
+            $_.Exception.Message | Should -Be (Get-ErrorMessage -Code NOT_FOUND -Params @($Path));
         }
     }
 }

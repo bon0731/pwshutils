@@ -9,7 +9,7 @@ function Convert-ImageFormat() {
         try {
             $resolve_path = (Resolve-Path -Path $Path -ErrorAction Stop).Path;
         } catch [System.Management.Automation.ItemNotFoundException] {
-            throw "${Path} が見つかりません。";
+            throw Get-ErrorMessage -Code NOT_FOUND -Params @($Path);
         }
         try {
             $image = Get-ImageFromStream -Path $resolve_path;

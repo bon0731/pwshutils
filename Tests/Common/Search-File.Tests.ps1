@@ -1,4 +1,5 @@
 Import-Module "$PSScriptRoot/../../pwshutils.psm1" -Force;
+. "$PSScriptRoot/../../Private/Resource/Get-ErrorMessage.ps1";
 
 Describe "基本検索処理" {
     It "マッチファイル表示" {
@@ -29,13 +30,16 @@ Describe "例外" {
             Search-File -Path $path -Pattern "c";
             throw "";
         } catch {
-            $_.Exception.Message | Should -Be "${path} が見つかりません。";
+            $_.Exception.Message | Should -Be (Get-ErrorMessage -Code NOT_FOUND -Params @($Path));
         }
     }
     It "Pathがファイル" {
         try {
             $temp_file = New-TemporaryFile;
-            Set-Content -Path $temp_file.FullName -Value "";
+            Search-File -Path $path -Pattern "c";
+            throw "";
+        } catch {
+            $_.Exception.Message | Should -Be (Get-ErrorMessage -Code NEED_DIRECTORY -Params @("-Path"));
         } finally {
             $temp_file.Delete();
         }

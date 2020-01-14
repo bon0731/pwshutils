@@ -26,7 +26,7 @@ function Rename-ItemByPattern() {
             $old_name = Split-Path -Path $resolve_path -Leaf;
             Rename-Item -Path $resolve_path -NewName ($old_name -replace $Pattern, $Replacement);
         } catch [System.Management.Automation.ItemNotFoundException] {
-            throw "${Path} が見つかりません。";
+            throw Get-ErrorMessage -Code NOT_FOUND -Params @($Path);
         }
     }
 }

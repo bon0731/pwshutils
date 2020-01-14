@@ -23,10 +23,10 @@ function Search-Directory() {
     try {
         $resolve_path = (Resolve-Path -Path $Path -ErrorAction Stop).Path;
     } catch [System.Management.Automation.ItemNotFoundException] {
-        throw "${Path} が見つかりません。";
+        throw Get-ErrorMessage -Code NOT_FOUND -Params @($Path);
     }
     if([System.IO.File]::Exists($Path)) {
-        throw "-Path にはディレクトリを指定してください。";
+        throw Get-ErrorMessage -Code NEED_DIRECTORY -Params @("-Path");
     }
     return Get-ChildItem -Path $resolve_path -Directory -Recurse | Where-Object {$_.Name -match $Pattern};
 }
