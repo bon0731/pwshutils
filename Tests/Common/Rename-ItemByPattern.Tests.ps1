@@ -1,4 +1,5 @@
 Import-Module "$PSScriptRoot/../../pwshutils.psm1" -Force;
+. "$PSScriptRoot/../../Private/Resource/Get-ErrorMessage.ps1";
 
 Describe "基本置換処理" {
     It "ファイル名置換" {
@@ -60,7 +61,7 @@ Describe "例外" {
             Rename-ItemByPattern -Path $path -Pattern "not_found" -Replacement "found";
             throw "";
         } catch {
-            $_.Exception.Message | Should -Be "${path} が見つかりません。";
+            $_.Exception.Message | Should -Be (Get-ErrorMessage -Code NOT_FOUND -Params @($Path));
         } finally {
             Get-ChildItem -Path $PSScriptRoot -Filter "*.tmp" | ForEach-Object {
                 $_.Delete();

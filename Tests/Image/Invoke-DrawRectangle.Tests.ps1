@@ -1,4 +1,5 @@
 Import-Module "$PSScriptRoot/../../pwshutils.psm1" -Force;
+. "$PSScriptRoot/../../Private/Resource/Get-ErrorMessage.ps1";
 
 Describe "基本処理" {
     It "描画" {
@@ -29,7 +30,7 @@ Describe "例外" {
             Invoke-DrawRectangle -Path $path -Left 25 -Top 15 -Width 50 -Height 70 -R 0xFF -G 0xFF -B 0xFF -A 0x7F -LineWidth 5;
             throw "";
         } catch {
-            $_.Exception.Message | Should -Be "${path} が見つかりません。";
+            $_.Exception.Message | Should -Be (Get-ErrorMessage -Code NOT_FOUND -Params @($Path));
         }
     }
 }

@@ -98,7 +98,7 @@ Patternパラメータに指定した文字列でマッチさせる際に大文�
         try {
             $resolve_path = (Resolve-Path -Path $Path -ErrorAction Stop).Path;
         } catch [System.Management.Automation.ItemNotFoundException] {
-            throw "${Path} が見つかりません。";
+            throw Get-ErrorMessage -Code NOT_FOUND -Params @($Path);
         }
         if([System.IO.File]::Exists($resolve_path)) {
             Search-StringPrivate -Path $resolve_path -Pattern $Pattern -Before $Before -After $After -Encoding $Encoding -Writer $Writer -CaseSensitive:$CaseSensitive;

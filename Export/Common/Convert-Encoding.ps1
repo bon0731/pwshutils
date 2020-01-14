@@ -40,7 +40,7 @@ function Convert-Encoding() {
                 Convert-NewLine -Path $Path -Encoding $To -LF;
             }
         } catch [System.Management.Automation.ItemNotFoundException] {
-            throw "${Path} が見つかりません。";
+            throw Get-ErrorMessage -Code NOT_FOUND -Params @($Path);
         }
     }
 }

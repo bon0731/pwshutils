@@ -1,4 +1,5 @@
 Import-Module "$PSScriptRoot/../../pwshutils.psm1" -Force;
+. "$PSScriptRoot/../../Private/Resource/Get-ErrorMessage.ps1";
 
 Describe "基本変換処理" {
     @(
@@ -65,7 +66,7 @@ Describe "例外" {
             Convert-Encoding -Path $path -From UTF-8 -To UTF-8;
             throw "";
         } catch {
-            $_.Exception.Message | Should -Be "${path} が見つかりません。";
+            $_.Exception.Message | Should -Be (Get-ErrorMessage -Code NOT_FOUND -Params @($Path));
         }
     }
 }

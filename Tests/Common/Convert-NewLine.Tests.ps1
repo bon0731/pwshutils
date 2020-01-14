@@ -1,4 +1,5 @@
 Import-Module "$PSScriptRoot/../../pwshutils.psm1" -Force;
+. "$PSScriptRoot/../../Private/Resource/Get-ErrorMessage.ps1";
 
 Describe "基本変換処理" {
     @("SJIS", "UTF-8", "UTF-16BE", "UTF-16LE", "UTF-32BE", "UTF-32LE") | ForEach-Object {
@@ -52,7 +53,7 @@ Describe "例外" {
             Convert-NewLine -Path $path;
             throw "";
         } catch {
-            $_.Exception.Message | Should -Be "-CRLF、-LF のいずれかを指定してください。";
+            $_.Exception.Message | Should -Be (Get-ErrorMessage -Code REQUIRED_OR -Params @("-CRLF", "-LF"));
         }
     }
     It "ファイルがない" {
@@ -61,7 +62,7 @@ Describe "例外" {
             Convert-NewLine -Path $path -CRLF;
             throw "";
         } catch {
-            $_.Exception.Message | Should -Be "${path} が見つかりません。";
+            $_.Exception.Message | Should -Be (Get-ErrorMessage -Code NOT_FOUND -Params @($Path));
         }
     }
 }

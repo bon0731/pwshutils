@@ -6,7 +6,7 @@ function Get-ImageFromStream() {
         try {
             $resolve_path = (Resolve-Path -Path $Path -ErrorAction Stop).Path;
         } catch [System.Management.Automation.ItemNotFoundException] {
-            throw "${Path} が見つかりません。";
+            throw Get-ErrorMessage -Code NOT_FOUND -Params @($Path);
         }
         # Streamから読み込んで一旦ファイルを閉じないと環境によっては上書き保存できないため、
         # StreamからImageにしてStreamは閉じる
