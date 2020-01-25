@@ -19,6 +19,7 @@ Import-Module ./pwshutils.psm1 -Force
 * Search-Directory (ディレクトリ名検索)
 * Search-File (ファイル名検索)
 * Search-String (ファイル内文字列検索)
+* Watch-Directory (ディレクトリ内変更の検知)
 
 ### 画像系関数
 
