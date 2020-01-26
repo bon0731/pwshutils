@@ -1,6 +1,8 @@
-Get-ChildItem -Filter *.ps1 -Path Export, Private -Recurse | ForEach-Object {
+$ExportPath = "$PSScriptRoot/Export";
+$PrivatePath = "$PSScriptRoot/Private";
+Get-ChildItem -Filter *.ps1 -Path $ExportPath, $PrivatePath -Recurse | ForEach-Object {
     . $_.FullName;
 }
-Get-ChildItem -Filter *.ps1 -Path Export -Recurse | ForEach-Object {
+Get-ChildItem -Filter *.ps1 -Path $ExportPath -Recurse | ForEach-Object {
     Export-ModuleMember $_.BaseName;
 }
